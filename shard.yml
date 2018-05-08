@@ -1,0 +1,9 @@
+name: unqlite
+version: 0.1.0
+
+authors:
+  - Kevin <root@unixs.org>
+
+crystal: 0.24.2
+
+license: MIT
