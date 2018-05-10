@@ -89,4 +89,29 @@ lib LibUnQLite
   fun unqlite_value_to_string(pValue : UnQLiteValue, pLen : Int32*) : StringT
   fun unqlite_value_to_resource(pValue : UnQLiteValue) : Void*
   fun unqlite_value_compare(pLeft : UnQLiteValue, pRight : UnQLiteValue, bStrict : Int32) : Int32
+
+  # Setting The Result Of A Foreign Function
+  fun unqlite_result_int(pCtx : UnQLiteContext, iValue : Int32) : Int32
+  fun unqlite_result_int64(pCtx : UnQLiteContext, iValue : UnQLite_Int64) : Int32
+  fun unqlite_result_bool(pCtx : UnQLiteContext, iBool : Int32) : Int32
+  fun unqlite_result_double(pCtx : UnQLiteContext, value : Float64) : Int32
+  fun unqlite_result_null(pCtx : UnQLiteContext) : Int32
+  fun unqlite_result_string(pCtx : UnQLiteContext, zString : StringT, nLen : Int32) : Int32
+  fun unqlite_result_string_format(pCtx : UnQLiteContext, zFormat : StringT, ...) : Int32
+  fun unqlite_result_value(pCtx : UnQLiteContext, pValue : UnQLiteValue) : Int32
+  fun unqlite_result_resource(pVal : UnQLiteValue, pUserData : Void*) : Int32
+
+  # Dynamically Typed Value Object Query Interfaces
+  fun unqlite_value_is_int(pVal : UnQLiteValue) : Int32
+  fun unqlite_value_is_float(pVal : UnQLiteValue) : Int32
+  fun unqlite_value_is_bool(pVal : UnQLiteValue) : Int32
+  fun unqlite_value_is_string(pVal : UnQLiteValue) : Int32
+  fun unqlite_value_is_null(pVal : UnQLiteValue) : Int32
+  fun unqlite_value_is_numeric(pVal : UnQLiteValue) : Int32
+  fun unqlite_value_is_callable(pVal : UnQLiteValue) : Int32
+  fun unqlite_value_is_scalar(pVal : UnQLiteValue) : Int32
+  fun unqlite_value_is_json_array(pVal : UnQLiteValue) : Int32
+  fun unqlite_value_is_json_object(pVal : UnQLiteValue) : Int32
+  fun unqlite_value_is_resource(pVal : UnQLiteValue) : Int32
+  fun unqlite_value_is_empty(pVal : UnQLiteValue) : Int32
 end
