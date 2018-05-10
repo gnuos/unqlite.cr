@@ -60,4 +60,33 @@ lib LibUnQLite
   fun unqlite_delete_function(pVm : UnQLiteVm, zName : StringT) : Int32
   fun unqlite_create_constant(pVm : UnQLiteVm, zName : StringT, xExpand : (UnQLiteValue*, Void*) -> NoReturn, pUserData : Void*) : Int32
   fun unqlite_delete_constant(pVm : UnQLiteVm, zName : StringT) : Int32
+  
+  # On Demand Object allocation interfaces
+  fun unqlite_vm_new_scalar(pVm : UnQLiteVm) : UnQLiteValue
+  fun unqlite_vm_new_array(pVm : UnQLiteVm) : UnQLiteValue
+  fun unqlite_vm_release_value(pVm : UnQLiteVm, pValue : UnQLiteValue) : Int32
+  fun unqlite_context_new_scalar(pCtx : UnQLiteContext) : UnQLiteValue
+  fun unqlite_context_new_array(pCtx : UnQLiteContext) : UnQLiteValue
+  fun unqlite_context_release_value(pCtx : UnQLiteContext, pValue : UnQLiteValue) : NoReturn
+
+  # Dynamically Typed Value Object Management Interfaces
+  fun unqlite_value_int(pVal : UnQLiteValue, iValue : UnQLiteValue) : Int32
+  fun unqlite_value_int64(pVal : UnQLiteValue, iValue : UnQLite_Int64) : Int32
+  fun unqlite_value_bool(pVal : UnQLiteValue, iBool : Int32) : Int32
+  fun unqlite_value_null(pVal : UnQLiteValue) : Int32
+  fun unqlite_value_double(pVal : UnQLiteValue, value : Float64) : Int32
+  fun unqlite_value_string(pVal : UnQLiteValue, zString : StringT, nLen : Int32) : Int32
+  fun unqlite_value_string_format(pVal : UnQLiteValue, zFormat : StringT, ...) : Int32
+  fun unqlite_value_reset_string_cursor(pVal : UnQLiteValue) : Int32
+  fun unqlite_value_resource(pVal : UnQLiteValue, pUserData : Void*) : Int32
+  fun unqlite_value_release(pVal : UnQLiteValue) : Int32
+
+  # Foreign Function Parameter Values
+  fun unqlite_value_to_int(pValue : UnQLiteValue) : Int32
+  fun unqlite_value_to_bool(pValue : UnQLiteValue) : Int32
+  fun unqlite_value_to_int64(pValue : UnQLiteValue) : UnQLite_Int64
+  fun unqlite_value_to_double(pValue : UnQLiteValue) : Float64
+  fun unqlite_value_to_string(pValue : UnQLiteValue, pLen : Int32*) : StringT
+  fun unqlite_value_to_resource(pValue : UnQLiteValue) : Void*
+  fun unqlite_value_compare(pLeft : UnQLiteValue, pRight : UnQLiteValue, bStrict : Int32) : Int32
 end
