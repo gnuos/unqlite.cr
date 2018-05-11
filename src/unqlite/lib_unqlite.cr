@@ -5,23 +5,23 @@ lib LibUnQLite
   alias UnQLite_Int64 = Int64
 
   # Database Engine Handle
-  fun unqlite_open(ppDB : UnQLiteT*, zFilename : StringP, iMode : UInt32) : Int32
-  fun unqlite_config(pDb : UnQLiteT, nOp : Int32, ...) : Int32
-  fun unqlite_close(pDb : UnQLiteT) : Int32
+  fun unqlite_open(ppDB : UnQLiteP*, zFilename : StringP, iMode : UInt32) : Int32
+  fun unqlite_config(pDb : UnQLiteP, nOp : Int32, ...) : Int32
+  fun unqlite_close(pDb : UnQLiteP) : Int32
 
   # Key/Value (KV) Store Interfaces
-  fun unqlite_kv_store(pDb : UnQLiteT, pKey : VoidP, nKeyLen : Int32, pData : VoidP, nDataLen : UnQLite_Int64) : Int32
-  fun unqlite_kv_append(pDb : UnQLiteT, pKey : VoidP, nKeyLen : Int32, pData : VoidP, nDataLen : UnQLite_Int64) : Int32
-  fun unqlite_kv_store_fmt(pDb : UnQLiteT, pKey : VoidP, nKeyLen : Int32, zFormat : StringP, ...) : Int32
-  fun unqlite_kv_append_fmt(pDb : UnQLiteT, pKey : VoidP, nKeyLen : Int32, zFormat : StringP, ...) : Int32
-  fun unqlite_kv_fetch(pDb : UnQLiteT, pKey : VoidP, nKeyLen : Int32, pBuf : VoidP, pBufLen : UnQLite_Int64*) : Int64
-  fun unqlite_kv_fetch_callback(pDb : UnQLiteT, pKey : VoidP, nKeyLen : Int32, xConsumer : (VoidP, UInt32, VoidP) -> Int32, pUserData : VoidP) : Int32
-  fun unqlite_kv_delete(pDb : UnQLiteT, pKey : VoidP, nKeyLen : Int32) : Int32
-  fun unqlite_kv_config(pDb : UnQLiteT, nOp : Int32, ...) : Int32
+  fun unqlite_kv_store(pDb : UnQLiteP, pKey : VoidP, nKeyLen : Int32, pData : VoidP, nDataLen : UnQLite_Int64) : Int32
+  fun unqlite_kv_append(pDb : UnQLiteP, pKey : VoidP, nKeyLen : Int32, pData : VoidP, nDataLen : UnQLite_Int64) : Int32
+  fun unqlite_kv_store_fmt(pDb : UnQLiteP, pKey : VoidP, nKeyLen : Int32, zFormat : StringP, ...) : Int32
+  fun unqlite_kv_append_fmt(pDb : UnQLiteP, pKey : VoidP, nKeyLen : Int32, zFormat : StringP, ...) : Int32
+  fun unqlite_kv_fetch(pDb : UnQLiteP, pKey : VoidP, nKeyLen : Int32, pBuf : VoidP, pBufLen : UnQLite_Int64*) : Int64
+  fun unqlite_kv_fetch_callback(pDb : UnQLiteP, pKey : VoidP, nKeyLen : Int32, xConsumer : (VoidP, UInt32, VoidP) -> Int32, pUserData : VoidP) : Int32
+  fun unqlite_kv_delete(pDb : UnQLiteP, pKey : VoidP, nKeyLen : Int32) : Int32
+  fun unqlite_kv_config(pDb : UnQLiteP, nOp : Int32, ...) : Int32
 
   # Document (JSON) Store Interfaces powered by the Jx9 Scripting Language
-  fun unqlite_compile(pDb : UnQLiteT, zJx9 : StringP, nByte : Int32, ppOut : UnQLiteVm*) : Int32
-  fun unqlite_compile_file(pDb : UnQLiteT, zPath : StringP, ppOut : UnQLiteVm*) : Int32
+  fun unqlite_compile(pDb : UnQLiteP, zJx9 : StringP, nByte : Int32, ppOut : UnQLiteVm*) : Int32
+  fun unqlite_compile_file(pDb : UnQLiteP, zPath : StringP, ppOut : UnQLiteVm*) : Int32
   fun unqlite_vm_config(pVm : UnQLiteVm, iOp : Int32, ...) : Int32
   fun unqlite_vm_exec(pVm : UnQLiteVm) : Int32
   fun unqlite_vm_reset(pVm : UnQLiteVm) : Int32
@@ -30,8 +30,8 @@ lib LibUnQLite
   fun unqlite_vm_extract_variable(pVm : UnQLiteVm, zVarname : StringP) : UnQLiteValue
 
   # Cursor Iterator Interfaces
-  fun unqlite_kv_cursor_init(pDb : UnQLiteT, ppOut : UnQLiteKvCursor*) : Int32
-  fun unqlite_kv_cursor_release(pDb : UnQLiteT, pCur : UnQLiteKvCursor) : Int32
+  fun unqlite_kv_cursor_init(pDb : UnQLiteP, ppOut : UnQLiteKvCursor*) : Int32
+  fun unqlite_kv_cursor_release(pDb : UnQLiteP, pCur : UnQLiteKvCursor) : Int32
   fun unqlite_kv_cursor_seek(pCursor : UnQLiteKvCursor, pKey : VoidP, nKeyLen : Int32, iPos : Int32) : Int32
   fun unqlite_kv_cursor_first_entry(pCursor : UnQLiteKvCursor) : Int32
   fun unqlite_kv_cursor_last_entry(pCursor : UnQLiteKvCursor) : Int32
@@ -46,15 +46,15 @@ lib LibUnQLite
   fun unqlite_kv_cursor_reset(pCursor : UnQLiteKvCursor) : Int32
 
   # Manual Transaction Manager
-  fun unqlite_begin(pDb : UnQLiteT) : Int32
-  fun unqlite_commit(pDb : UnQLiteT) : Int32
-  fun unqlite_rollback(pDb : UnQLiteT) : Int32
+  fun unqlite_begin(pDb : UnQLiteP) : Int32
+  fun unqlite_commit(pDb : UnQLiteP) : Int32
+  fun unqlite_rollback(pDb : UnQLiteP) : Int32
 
   # Utility interfaces
   fun unqlite_util_load_mmaped_file(zFile : StringP, ppMap : VoidP, pFileSize : UnQLite_Int64) : Int32
   fun unqlite_util_release_mmaped_file(pMap : VoidP, iFileSize : UnQLite_Int64) : Int32
-  fun unqlite_util_random_string(pDb : UnQLiteT, zBuf : StringP, buf_size : UInt32) : Int32
-  fun unqlite_util_random_num(pDb : UnQLiteT) : UInt32
+  fun unqlite_util_random_string(pDb : UnQLiteP, zBuf : StringP, buf_size : UInt32) : Int32
+  fun unqlite_util_random_num(pDb : UnQLiteP) : UInt32
 
   # In-process extending interfaces
   fun unqlite_create_function(pVm : UnQLiteVm, zName : StringP, xFunc : (UnQLiteContext*, Int32, UnQLiteValue**) -> Int32, pUserData : VoidP) : Int32

@@ -11,17 +11,90 @@ module UnQLite
 
       @ret_address = 0_u32
       @ret_ptr = pointerof(@ret_address).as(Pointer(UInt32))
+
+      @rc = open
+      if @rc != StdUnQLiteReturn.UNQLITE_OK
+        fatal(0, "Out of memory")
+      end
+      @opened = true
     end
 
-    def open : Int32
-      if path.empty?
-        LibUnQLite.unqlite_open(@db_ptr, ":mem:", LibUnQLite.UNQLITE_OPEN_CREATE)
-      end
-      LibUnQLite.unqlite_open(@db_ptr, @path, LibUnQLite.UNQLITE_OPEN_CREATE)
+    def open : Void
+      return if opened?
+
+      check_path = ->(x : String) { if x.empty?
+        ":mem:"
+      else
+        x
+      end }
+      @rc = LibUnQLite.unqlite_open(@db_ptr, check_path(@path), FileOpenFlags.UNQLITE_OPEN_CREATE)
     end
 
     def opened? : Bool
       @opened
+    end
+
+    def close : Void
+      return if closed?
+      LibLevelDB.unqlite_vm_release(@vm_ptr)
+      LibLevelDB.unqlite_close(@db_ptr)
+      @opened = false
+    end
+
+    def closed? : Bool
+      !opened?
+    end
+
+    def fatal(pDb : LibUnQLite::UnQLiteP, zMsg : String) : NoReturn
+      if pDb != 0
+        iLen = 0_u32
+        pLen = pointerof(iLen).as(Pointer(UInt64))
+
+        LibLevelDB.unqlite_config(@db_ptr, DbHandlerConfig.UNQLITE_CONFIG_ERR_LOG, @err_ptr, pLen)
+        if pLen > 0
+          check_error!
+        end
+      else
+        if !zMsg.empty?
+          puts zMsg
+        end
+      end
+
+      LibLevelDB.unqlite_lib_shutdown
+      exit(0)
+    end
+
+    def compile(script : String) : Void
+      @rc = LibLevelDB.unqlite_compile(@db_ptr, script, script.bytesize, pointerof(@vm_ptr))
+      if @rc != StdUnQLiteReturn.UNQLITE_OK
+        iLen = 0_u32
+        pLen = pointerof(iLen).as(Pointer(UInt64))
+
+        LibLevelDB.unqlite_config(@db_ptr, DbHandlerConfig.UNQLITE_CONFIG_ERR_LOG, @err_ptr, pLen)
+        if pLen > 0
+          check_error!
+        end
+
+        fatal(0, "Jx9 compile error")
+      end
+
+      @rc = LibLevelDB.unqlite_vm_config(@vm_ptr, Jx9VmConfigCmd.UNQLITE_VM_CONFIG_OUTPUT, 0)
+      if @rc != StdUnQLiteReturn.UNQLITE_OK
+        fatal(@db_ptr, 0)
+      end
+    end
+
+    def exec : Void
+      @rc = LibLevelDB.unqlite_vm_exec(@vm_ptr)
+      if @rc != StdUnQLiteReturn.UNQLITE_OK
+        fatal(@db_ptr, 0)
+      end
+    end
+
+    def finalize
+      close if opened?
+      LibLevelDB.unqlite_free(@vm_ptr)
+      LibLevelDB.unqlite_free(@db_ptr)
     end
 
     @[AlwaysInline]

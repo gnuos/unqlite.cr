@@ -1,5 +1,5 @@
 lib LibUnQLite
-  type UnQLiteT = Void*
+  type UnQLiteP = Void*
   type UnQLiteVm = Void*
   type UnQLiteFile = Void*
   type UnQLiteIOMethods = Void*
