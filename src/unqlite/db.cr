@@ -12,7 +12,7 @@ module UnQLite
       @ret_ptr = uninitialized Void*
 
       @vmOutputConsumer = ->(pOutput : Void*, nOutLen : UInt32, pUserData : Void*) {
-        slice = Slice(UInt8).new(pOutput, nOutLen)
+        slice = Slice(UInt8).new(pOutput.as(Pointer(UInt8)), Int.new(nOutLen))
         STDOUT.write(slice)
 
         Int32.new(StdUnQLiteReturn::UNQLITE_OK.value)
