@@ -50,12 +50,12 @@ module UnQLite
       iLen = 0_u32
       pLen = Pointer(UInt32).new(iLen)
 
-      LibLevelDB.unqlite_config(@db_ptr, DbHandlerConfig::UNQLITE_CONFIG_ERR_LOG, @err_ptr, pLen)
+      LibUnQLite.unqlite_config(@db_ptr, DbHandlerConfig::UNQLITE_CONFIG_ERR_LOG, @err_ptr, pLen)
       if pLen > 0
         check_error!
       end
 
-      LibLevelDB.unqlite_lib_shutdown
+      LibUnQLite.unqlite_lib_shutdown
       exit(1)
     end
 
@@ -64,17 +64,17 @@ module UnQLite
         puts zMsg
       end
 
-      LibLevelDB.unqlite_lib_shutdown
+      LibUnQLite.unqlite_lib_shutdown
       exit(1)
     end
 
     def compile(script : String) : Void
-      rc = LibLevelDB.unqlite_compile(@db_ptr, script, UInt32.new(script.bytesize), pointerof(@vm_ptr))
+      rc = LibUnQLite.unqlite_compile(@db_ptr, script, UInt32.new(script.bytesize), pointerof(@vm_ptr))
       if rc != StdUnQLiteReturn::UNQLITE_OK
         iLen = 0_u32
         pLen = Pointer(UInt32).new(iLen)
 
-        LibLevelDB.unqlite_config(@db_ptr, DbHandlerConfig::UNQLITE_CONFIG_ERR_LOG, @err_ptr, pLen)
+        LibUnQLite.unqlite_config(@db_ptr, DbHandlerConfig::UNQLITE_CONFIG_ERR_LOG, @err_ptr, pLen)
         if pLen > 0
           check_error!
         end
@@ -82,23 +82,23 @@ module UnQLite
         fatal("Jx9 compile error")
       end
 
-      rc = LibLevelDB.unqlite_vm_config(@vm_ptr, Jx9VmConfigCmd::UNQLITE_VM_CONFIG_OUTPUT, 0)
+      rc = LibUnQLite.unqlite_vm_config(@vm_ptr, Jx9VmConfigCmd::UNQLITE_VM_CONFIG_OUTPUT, 0)
       if rc != StdUnQLiteReturn::UNQLITE_OK
         fatal(@db_ptr)
       end
     end
 
     def exec : Void
-      rc = LibLevelDB.unqlite_vm_exec(@vm_ptr)
+      rc = LibUnQLite.unqlite_vm_exec(@vm_ptr)
       if rc != StdUnQLiteReturn::UNQLITE_OK
         fatal(@db_ptr)
       end
     end
 
     def free
-      LibLevelDB.unqlite_free(@err_ptr)
-      LibLevelDB.unqlite_vm_release(@vm_ptr)
-      LibLevelDB.unqlite_close(@db_ptr)
+      LibUnQLite.unqlite_free(@err_ptr)
+      LibUnQLite.unqlite_vm_release(@vm_ptr)
+      LibUnQLite.unqlite_close(@db_ptr)
     end
 
     @[AlwaysInline]
@@ -111,7 +111,7 @@ module UnQLite
       if @err_address != 0
         ptr = Pointer(UInt8).new(@err_address)
         message = String.new(ptr)
-        LibLevelDB.unqlite_free(ptr)
+        LibUnQLite.unqlite_free(ptr)
         raise(Error.new(message))
       end
     end
