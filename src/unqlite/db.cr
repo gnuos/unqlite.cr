@@ -1,6 +1,7 @@
 module UnQLite
   class DB
     getter :db_ptr, :vm_ptr, :ret_ptr, :err_ptr
+    getter vmOutputConsumer : Proc(Pointer(Void), UInt32, Pointer(Void), Int32)
 
     def initialize
       @err_ptr = uninitialized LibUnQLite::StringP
@@ -12,10 +13,10 @@ module UnQLite
       @ret_ptr = uninitialized Void*
 
       @vmOutputConsumer = ->(pOutput : Void*, nOutLen : UInt32, pUserData : Void*) {
-        slice = Slice(UInt8).new(pOutput.as(Pointer(UInt8)), Int.new(nOutLen))
+        slice = Slice(UInt8).new(pOutput.as(Pointer(UInt8)), nOutLen.to_i)
         STDOUT.write(slice)
 
-        Int32.new(StdUnQLiteReturn::UNQLITE_OK.value)
+        StdUnQLiteReturn::UNQLITE_OK.value
       }
     end
 
@@ -54,7 +55,6 @@ module UnQLite
       iLen = 0_u32
       pLen = Pointer(UInt32).new(iLen)
 
-      puts("致命错误 ===>")
       LibUnQLite.unqlite_config(@db_ptr, DbHandlerConfig::UNQLITE_CONFIG_ERR_LOG.value, @err_ptr, pLen)
       if pLen.value > 0
         check_error!
@@ -74,7 +74,6 @@ module UnQLite
     end
 
     def compile(script : String) : Void
-      puts("编译Jx9脚本 ===>")
       rc = LibUnQLite.unqlite_compile(@db_ptr, script, UInt32.new(script.bytesize), pointerof(@vm_ptr))
       if rc != StdUnQLiteReturn::UNQLITE_OK.value
         iLen = 0_u32
@@ -88,15 +87,13 @@ module UnQLite
         fatal("Jx9 compile error")
       end
 
-      puts("配置输出回调 ===>")
-      rc = LibUnQLite.unqlite_vm_config(@vm_ptr, Jx9VmConfigCmd::UNQLITE_VM_CONFIG_OUTPUT.value, vmOutputConsumer, 0)
+      rc = LibUnQLite.unqlite_vm_config(@vm_ptr, Jx9VmConfigCmd::UNQLITE_VM_CONFIG_OUTPUT.value, @vmOutputConsumer, 0)
       if rc != StdUnQLiteReturn::UNQLITE_OK.value
         fatal(@db_ptr)
       end
     end
 
     def exec : Void
-      puts "执行Jx9脚本"
       rc = LibUnQLite.unqlite_vm_exec(@vm_ptr)
       if rc != StdUnQLiteReturn::UNQLITE_OK.value
         fatal(@db_ptr)
