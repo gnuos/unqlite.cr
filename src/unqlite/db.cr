@@ -13,7 +13,7 @@ module UnQLite
       @ret_ptr = pointerof(@ret_address).as(Pointer(UInt32))
 
       @rc = open
-      if @rc != StdUnQLiteReturn.UNQLITE_OK
+      if @rc != StdUnQLiteReturn::UNQLITE_OK
         fatal(0, "Out of memory")
       end
       @opened = true
@@ -27,7 +27,7 @@ module UnQLite
       else
         x
       end }
-      @rc = LibUnQLite.unqlite_open(@db_ptr, check_path.call(@path), FileOpenFlags.UNQLITE_OPEN_CREATE)
+      @rc = LibUnQLite.unqlite_open(@db_ptr, check_path.call(@path), FileOpenFlags::UNQLITE_OPEN_CREATE)
     end
 
     def opened? : Bool
@@ -50,7 +50,7 @@ module UnQLite
         iLen = 0_u32
         pLen = pointerof(iLen).as(Pointer(UInt64))
 
-        LibLevelDB.unqlite_config(@db_ptr, DbHandlerConfig.UNQLITE_CONFIG_ERR_LOG, @err_ptr, pLen)
+        LibLevelDB.unqlite_config(@db_ptr, DbHandlerConfig::UNQLITE_CONFIG_ERR_LOG, @err_ptr, pLen)
         if pLen > 0
           check_error!
         end
@@ -66,11 +66,11 @@ module UnQLite
 
     def compile(script : String) : Void
       @rc = LibLevelDB.unqlite_compile(@db_ptr, script, script.bytesize, pointerof(@vm_ptr))
-      if @rc != StdUnQLiteReturn.UNQLITE_OK
+      if @rc != StdUnQLiteReturn::UNQLITE_OK
         iLen = 0_u32
         pLen = pointerof(iLen).as(Pointer(UInt64))
 
-        LibLevelDB.unqlite_config(@db_ptr, DbHandlerConfig.UNQLITE_CONFIG_ERR_LOG, @err_ptr, pLen)
+        LibLevelDB.unqlite_config(@db_ptr, DbHandlerConfig::UNQLITE_CONFIG_ERR_LOG, @err_ptr, pLen)
         if pLen > 0
           check_error!
         end
@@ -78,15 +78,15 @@ module UnQLite
         fatal(0, "Jx9 compile error")
       end
 
-      @rc = LibLevelDB.unqlite_vm_config(@vm_ptr, Jx9VmConfigCmd.UNQLITE_VM_CONFIG_OUTPUT, 0)
-      if @rc != StdUnQLiteReturn.UNQLITE_OK
+      @rc = LibLevelDB.unqlite_vm_config(@vm_ptr, Jx9VmConfigCmd::UNQLITE_VM_CONFIG_OUTPUT, 0)
+      if @rc != StdUnQLiteReturn::UNQLITE_OK
         fatal(@db_ptr, 0)
       end
     end
 
     def exec : Void
       @rc = LibLevelDB.unqlite_vm_exec(@vm_ptr)
-      if @rc != StdUnQLiteReturn.UNQLITE_OK
+      if @rc != StdUnQLiteReturn::UNQLITE_OK
         fatal(@db_ptr, 0)
       end
     end
