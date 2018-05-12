@@ -26,7 +26,7 @@ module UnQLite
 
       rc = LibUnQLite.unqlite_open(@db_ptr, check_path.call(path), FileOpenFlags::UNQLITE_OPEN_CREATE)
       if rc != StdUnQLiteReturn::UNQLITE_OK
-        fatal(0, "Out of memory")
+        fatal("Out of memory")
       end
       @opened = true
     end
@@ -46,23 +46,26 @@ module UnQLite
       !opened?
     end
 
-    def fatal(pDb : LibUnQLite::UnQLiteP, zMsg : String) : NoReturn
-      if pDb != 0
-        iLen = 0_u32
-        pLen = Pointer(UInt32).new(iLen)
+    def fatal(pDb : LibUnQLite::UnQLiteP) : NoReturn
+      iLen = 0_u32
+      pLen = Pointer(UInt32).new(iLen)
 
-        LibLevelDB.unqlite_config(@db_ptr, DbHandlerConfig::UNQLITE_CONFIG_ERR_LOG, @err_ptr, pLen)
-        if pLen > 0
-          check_error!
-        end
-      else
-        if !zMsg.empty?
-          puts zMsg
-        end
+      LibLevelDB.unqlite_config(@db_ptr, DbHandlerConfig::UNQLITE_CONFIG_ERR_LOG, @err_ptr, pLen)
+      if pLen > 0
+        check_error!
       end
 
       LibLevelDB.unqlite_lib_shutdown
-      exit(0)
+      exit(1)
+    end
+
+    def fatal(zMsg : String) : NoReturn
+      if !zMsg.empty?
+        puts zMsg
+      end
+
+      LibLevelDB.unqlite_lib_shutdown
+      exit(1)
     end
 
     def compile(script : String) : Void
@@ -76,19 +79,19 @@ module UnQLite
           check_error!
         end
 
-        fatal(0, "Jx9 compile error")
+        fatal("Jx9 compile error")
       end
 
       rc = LibLevelDB.unqlite_vm_config(@vm_ptr, Jx9VmConfigCmd::UNQLITE_VM_CONFIG_OUTPUT, 0)
       if rc != StdUnQLiteReturn::UNQLITE_OK
-        fatal(@db_ptr, "")
+        fatal(@db_ptr)
       end
     end
 
     def exec : Void
       rc = LibLevelDB.unqlite_vm_exec(@vm_ptr)
       if rc != StdUnQLiteReturn::UNQLITE_OK
-        fatal(@db_ptr, "")
+        fatal(@db_ptr)
       end
     end
 
