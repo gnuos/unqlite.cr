@@ -22,7 +22,8 @@ module UnQLite
         pointerof(x).as(Pointer(UInt8))
       end }
 
-      rc = LibUnQLite.unqlite_open(Pointer(LibUnQLite::UnQLiteP*).new(@db_ptr), check_path.call(path), FileOpenFlags::UNQLITE_OPEN_CREATE)
+      ppDb = pointerof(@db_ptr).as(Pointer(LibUnQLite::UnQLiteP))
+      rc = LibUnQLite.unqlite_open(ppDb, check_path.call(path), FileOpenFlags::UNQLITE_OPEN_CREATE)
       if rc != StdUnQLiteReturn::UNQLITE_OK
         fatal("Out of memory")
       end
@@ -49,7 +50,7 @@ module UnQLite
       pLen = Pointer(UInt32).new(iLen)
 
       LibUnQLite.unqlite_config(@db_ptr, DbHandlerConfig::UNQLITE_CONFIG_ERR_LOG, @err_ptr, pLen)
-      if pLen > 0
+      if pLen.value > 0
         check_error!
       end
 
@@ -73,7 +74,7 @@ module UnQLite
         pLen = Pointer(UInt32).new(iLen)
 
         LibUnQLite.unqlite_config(@db_ptr, DbHandlerConfig::UNQLITE_CONFIG_ERR_LOG, @err_ptr, pLen)
-        if pLen > 0
+        if pLen.value > 0
           check_error!
         end
 
@@ -94,7 +95,6 @@ module UnQLite
     end
 
     def free
-      LibUnQLite.unqlite_free(@err_ptr)
       LibUnQLite.unqlite_vm_release(@vm_ptr)
       LibUnQLite.unqlite_close(@db_ptr)
     end
@@ -109,7 +109,6 @@ module UnQLite
       if @err_address != 0
         ptr = Pointer(UInt8).new(@err_address)
         message = String.new(ptr)
-        LibUnQLite.unqlite_free(ptr)
         raise(Error.new(message))
       end
     end
