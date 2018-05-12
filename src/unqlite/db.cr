@@ -6,11 +6,11 @@ module UnQLite
       @err_address = 0_u32
       @err_ptr = pointerof(@err_address).as(Pointer(UInt64))
 
-      @db_address = uninitialized Void
-      @db_ptr = pointerof(@db_address).as(Pointer(LibUnQLite::UnQLiteP))
+      @db_address = uninitialized LibUnQLite::UnQLiteP
+      @db_ptr = pointerof(@db_address)
 
-      @vm_address = uninitialized Void
-      @vm_ptr = pointerof(@vm_address).as(Pointer(LibUnQLite::UnQLiteVm))
+      @vm_address = uninitialized LibUnQLite::UnQLiteVm
+      @vm_ptr = pointerof(@vm_address)
 
       @ret_address = 0_u32
       @ret_ptr = pointerof(@ret_address).as(Pointer(UInt64))
