@@ -11,17 +11,16 @@ module UnQLite
 
       @vm_address = uninitialized Void
       @vm_ptr = pointerof(@vm_address).as(Pointer(LibUnQLite::UnQLiteVm))
-      
+
       @ret_address = 0_u32
       @ret_ptr = pointerof(@ret_address).as(Pointer(UInt64))
     end
 
     def open(path : String) : Void
-      check_path = ->(x : String -> Pointer(LibUnQLite::StringP)) { if x.empty?
-        f = ":mem:"
-        pointerof(f).as(Pointer(LibUnQLite::StringP))
+      check_path = ->(x : String) { if x.empty?
+        UInt8.new(":mem:")
       else
-        pointerof(x).as(Pointer(LibUnQLite::StringP))
+        UInt8.new(x)
       end }
 
       rc = LibUnQLite.unqlite_open(@db_ptr, check_path.call(path), FileOpenFlags::UNQLITE_OPEN_CREATE)
