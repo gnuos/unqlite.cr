@@ -3,7 +3,7 @@ module UnQLite
     getter :db_ptr, :vm_ptr, :ret_ptr, :err_ptr
 
     def initialize
-      @err_ptr = uninitialized StringP
+      @err_ptr = uninitialized LibUnQLite::StringP
 
       @db_ptr = uninitialized LibUnQLite::UnQLiteP
 
