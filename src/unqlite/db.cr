@@ -25,6 +25,7 @@ module UnQLite
       ppDb = pointerof(@db_ptr).as(Pointer(LibUnQLite::UnQLiteP))
       rc = LibUnQLite.unqlite_open(ppDb, check_path.call(path), FileOpenFlags::UNQLITE_OPEN_CREATE)
       if rc != StdUnQLiteReturn::UNQLITE_OK
+        puts "#{rc}"
         fatal("Out of memory")
       end
       @opened = true
