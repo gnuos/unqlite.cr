@@ -18,9 +18,10 @@ module UnQLite
 
     def open(path : String) : Void
       check_path = ->(x : String) { if x.empty?
-        UInt8.new(":mem:")
+        f = ":mem:"
+        pointerof(f).as(Pointer(UInt8))
       else
-        UInt8.new(x)
+        pointerof(x).as(Pointer(UInt8))
       end }
 
       rc = LibUnQLite.unqlite_open(@db_ptr, check_path.call(path), FileOpenFlags::UNQLITE_OPEN_CREATE)
