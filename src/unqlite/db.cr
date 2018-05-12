@@ -17,8 +17,6 @@ module UnQLite
     end
 
     def open(path : String) : Void
-      return if opened?
-
       check_path = ->(x : String -> Pointer(LibUnQLite::StringP)) { if x.empty?
         f = ":mem:"
         pointerof(f).as(Pointer(LibUnQLite::StringP))
@@ -34,7 +32,7 @@ module UnQLite
     end
 
     def opened? : Bool
-      @opened
+      @opened || false
     end
 
     def close : Void
