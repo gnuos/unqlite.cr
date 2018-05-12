@@ -34,10 +34,10 @@ module UnQLite
     end
 
     def close : Void
-      return if closed?
-      LibLevelDB.unqlite_vm_release(@vm_ptr)
-      LibLevelDB.unqlite_close(@db_ptr)
-      @opened = false
+      if closed?
+        free
+        @opened = false
+      end
     end
 
     def closed? : Bool
@@ -90,10 +90,10 @@ module UnQLite
       end
     end
 
-    def finalize
-      close if opened?
-      LibLevelDB.unqlite_free(@vm_ptr)
-      LibLevelDB.unqlite_free(@db_ptr)
+    def free
+      LibLevelDB.unqlite_free(@err_ptr)
+      LibLevelDB.unqlite_vm_release(@vm_ptr)
+      LibLevelDB.unqlite_close(@db_ptr)
     end
 
     @[AlwaysInline]
