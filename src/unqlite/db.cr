@@ -3,15 +3,13 @@ module UnQLite
     getter :db_ptr, :vm_ptr, :ret_ptr, :err_ptr
 
     def initialize
-      @err_address = 0_u32
-      @err_ptr = pointerof(@err_address).as(Pointer(UInt64))
+      @err_ptr = uninitialized StringP
 
       @db_ptr = uninitialized LibUnQLite::UnQLiteP
 
       @vm_ptr = uninitialized LibUnQLite::UnQLiteVm
 
-      @ret_address = 0_u32
-      @ret_ptr = pointerof(@ret_address).as(Pointer(UInt64))
+      @ret_ptr = uninitialized Void*
     end
 
     def open(path : String) : Void
@@ -106,9 +104,8 @@ module UnQLite
 
     @[AlwaysInline]
     private def check_error!
-      if @err_address != 0
-        ptr = Pointer(UInt8).new(@err_address)
-        message = String.new(ptr)
+      if !@err_ptr.value.empty?
+        message = String.new(@err_ptr)
         raise(Error.new(message))
       end
     end
