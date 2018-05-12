@@ -27,7 +27,7 @@ module UnQLite
       else
         x
       end }
-      @rc = LibUnQLite.unqlite_open(@db_ptr, check_path(@path), FileOpenFlags.UNQLITE_OPEN_CREATE)
+      @rc = LibUnQLite.unqlite_open(@db_ptr, check_path.call(@path), FileOpenFlags.UNQLITE_OPEN_CREATE)
     end
 
     def opened? : Bool
@@ -60,7 +60,7 @@ module UnQLite
         end
       end
 
-      LibLevelDB.unqlite_lib_shutdown
+      LibLevelDB.unqlite_lib_shutdown()
       exit(0)
     end
 
