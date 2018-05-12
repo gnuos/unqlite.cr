@@ -23,9 +23,8 @@ module UnQLite
       end }
 
       ppDb = pointerof(@db_ptr).as(Pointer(LibUnQLite::UnQLiteP))
-      rc = LibUnQLite.unqlite_open(ppDb, check_path.call(path), FileOpenFlags::UNQLITE_OPEN_CREATE)
-      if rc != StdUnQLiteReturn::UNQLITE_OK
-        puts "#{rc}"
+      rc = LibUnQLite.unqlite_open(ppDb, check_path.call(path), FileOpenFlags::UNQLITE_OPEN_CREATE.value)
+      if rc != StdUnQLiteReturn::UNQLITE_OK.value
         fatal("Out of memory")
       end
       @opened = true
@@ -50,7 +49,7 @@ module UnQLite
       iLen = 0_u32
       pLen = Pointer(UInt32).new(iLen)
 
-      LibUnQLite.unqlite_config(@db_ptr, DbHandlerConfig::UNQLITE_CONFIG_ERR_LOG, @err_ptr, pLen)
+      LibUnQLite.unqlite_config(@db_ptr, DbHandlerConfig::UNQLITE_CONFIG_ERR_LOG.value, @err_ptr, pLen)
       if pLen.value > 0
         check_error!
       end
@@ -70,11 +69,11 @@ module UnQLite
 
     def compile(script : String) : Void
       rc = LibUnQLite.unqlite_compile(@db_ptr, script, UInt32.new(script.bytesize), pointerof(@vm_ptr))
-      if rc != StdUnQLiteReturn::UNQLITE_OK
+      if rc != StdUnQLiteReturn::UNQLITE_OK.value
         iLen = 0_u32
         pLen = Pointer(UInt32).new(iLen)
 
-        LibUnQLite.unqlite_config(@db_ptr, DbHandlerConfig::UNQLITE_CONFIG_ERR_LOG, @err_ptr, pLen)
+        LibUnQLite.unqlite_config(@db_ptr, DbHandlerConfig::UNQLITE_CONFIG_ERR_LOG.value, @err_ptr, pLen)
         if pLen.value > 0
           check_error!
         end
@@ -82,15 +81,15 @@ module UnQLite
         fatal("Jx9 compile error")
       end
 
-      rc = LibUnQLite.unqlite_vm_config(@vm_ptr, Jx9VmConfigCmd::UNQLITE_VM_CONFIG_OUTPUT, 0)
-      if rc != StdUnQLiteReturn::UNQLITE_OK
+      rc = LibUnQLite.unqlite_vm_config(@vm_ptr, Jx9VmConfigCmd::UNQLITE_VM_CONFIG_OUTPUT.value, 0)
+      if rc != StdUnQLiteReturn::UNQLITE_OK.value
         fatal(@db_ptr)
       end
     end
 
     def exec : Void
       rc = LibUnQLite.unqlite_vm_exec(@vm_ptr)
-      if rc != StdUnQLiteReturn::UNQLITE_OK
+      if rc != StdUnQLiteReturn::UNQLITE_OK.value
         fatal(@db_ptr)
       end
     end
