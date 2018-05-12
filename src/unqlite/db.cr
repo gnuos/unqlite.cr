@@ -2,7 +2,7 @@ module UnQLite
   class DB
     getter :db_ptr, :vm_ptr, :ret_ptr, :err_ptr
 
-    def initialize(@path : String, create_if_missing : Bool = true)
+    def initialize
       @err_address = 0_u32
       @err_ptr = pointerof(@err_address).as(Pointer(UInt64))
 
