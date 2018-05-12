@@ -49,7 +49,7 @@ module UnQLite
     def fatal(pDb : LibUnQLite::UnQLiteP, zMsg : String) : NoReturn
       if pDb != 0
         iLen = 0_u32
-        pLen = pointerof(iLen).as(Pointer(UInt64))
+        pLen = Pointer(UInt32).new(iLen)
 
         LibLevelDB.unqlite_config(@db_ptr, DbHandlerConfig::UNQLITE_CONFIG_ERR_LOG, @err_ptr, pLen)
         if pLen > 0
@@ -66,10 +66,10 @@ module UnQLite
     end
 
     def compile(script : String) : Void
-      rc = LibLevelDB.unqlite_compile(@db_ptr, script, script.bytesize, pointerof(@vm_ptr))
+      rc = LibLevelDB.unqlite_compile(@db_ptr, script, UInt32.new(script.bytesize), pointerof(@vm_ptr))
       if rc != StdUnQLiteReturn::UNQLITE_OK
         iLen = 0_u32
-        pLen = pointerof(iLen).as(Pointer(UInt64))
+        pLen = Pointer(UInt32).new(iLen)
 
         LibLevelDB.unqlite_config(@db_ptr, DbHandlerConfig::UNQLITE_CONFIG_ERR_LOG, @err_ptr, pLen)
         if pLen > 0
@@ -81,14 +81,14 @@ module UnQLite
 
       rc = LibLevelDB.unqlite_vm_config(@vm_ptr, Jx9VmConfigCmd::UNQLITE_VM_CONFIG_OUTPUT, 0)
       if rc != StdUnQLiteReturn::UNQLITE_OK
-        fatal(@db_ptr, 0)
+        fatal(@db_ptr, "")
       end
     end
 
     def exec : Void
       rc = LibLevelDB.unqlite_vm_exec(@vm_ptr)
       if rc != StdUnQLiteReturn::UNQLITE_OK
-        fatal(@db_ptr, 0)
+        fatal(@db_ptr, "")
       end
     end
 
