@@ -104,10 +104,8 @@ module UnQLite
 
     @[AlwaysInline]
     private def check_error!
-      if !@err_ptr.value.empty?
-        message = String.new(@err_ptr)
-        raise(Error.new(message))
-      end
+      message = String.new(@err_ptr)
+      raise(Error.new(message))
     end
   end
 end
