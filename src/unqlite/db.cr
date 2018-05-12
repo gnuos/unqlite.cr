@@ -10,6 +10,13 @@ module UnQLite
       @vm_ptr = uninitialized LibUnQLite::UnQLiteVm
 
       @ret_ptr = uninitialized Void*
+
+      @vmOutputConsumer = ->(pOutput : Void*, nOutLen : UInt32, pUserData : Void*) {
+        slice = Slice(UInt8).new(pOutput, nOutLen)
+        STDOUT.write(slice)
+
+        Int32.new(StdUnQLiteReturn::UNQLITE_OK.value)
+      }
     end
 
     def open(path : String) : Void
@@ -82,7 +89,7 @@ module UnQLite
       end
 
       puts("配置输出回调 ===>")
-      rc = LibUnQLite.unqlite_vm_config(@vm_ptr, Jx9VmConfigCmd::UNQLITE_VM_CONFIG_OUTPUT.value, 0, vmOutputConsumer.pointer)
+      rc = LibUnQLite.unqlite_vm_config(@vm_ptr, Jx9VmConfigCmd::UNQLITE_VM_CONFIG_OUTPUT.value, vmOutputConsumer, 0)
       if rc != StdUnQLiteReturn::UNQLITE_OK.value
         fatal(@db_ptr)
       end
@@ -94,13 +101,6 @@ module UnQLite
       if rc != StdUnQLiteReturn::UNQLITE_OK.value
         fatal(@db_ptr)
       end
-    end
-
-    def vmOutputConsumer(pOutput : Void*, nOutLen : UInt32, pUserData : Void*) : Int32
-      slice = Slice(UInt8).new(pOutput, nOutLen)
-      STDOUT.write(slice)
-
-      StdUnQLiteReturn::UNQLITE_OK.value
     end
 
     def free
