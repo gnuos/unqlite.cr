@@ -6,7 +6,7 @@ module UnQLite
       @err_address = 0_u32
       @err_ptr = pointerof(@err_address).as(Pointer(UInt64))
 
-      @db_ptr = uninitialized LibUnQLite::UnQLiteP*
+      @db_ptr = uninitialized LibUnQLite::UnQLiteP
 
       @vm_ptr = uninitialized LibUnQLite::UnQLiteVm
 
@@ -22,7 +22,7 @@ module UnQLite
         pointerof(x).as(Pointer(UInt8))
       end }
 
-      rc = LibUnQLite.unqlite_open(@db_ptr, check_path.call(path), FileOpenFlags::UNQLITE_OPEN_CREATE)
+      rc = LibUnQLite.unqlite_open(Pointer(LibUnQLite::UnQLiteP*).new(@db_ptr), check_path.call(path), FileOpenFlags::UNQLITE_OPEN_CREATE)
       if rc != StdUnQLiteReturn::UNQLITE_OK
         fatal("Out of memory")
       end
