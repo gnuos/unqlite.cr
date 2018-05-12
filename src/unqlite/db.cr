@@ -10,7 +10,7 @@ module UnQLite
       @db_ptr = pointerof(@db_address).as(Pointer(LibUnQLite::UnQLiteP))
 
       @vm_address = uninitialized Void
-      @vm_ptr = pointerof(@vm_ptr).as(Pointer(LibUnQLite::UnQLiteVm))
+      @vm_ptr = pointerof(@vm_address).as(Pointer(LibUnQLite::UnQLiteVm))
       
       @ret_address = 0_u32
       @ret_ptr = pointerof(@ret_address).as(Pointer(UInt64))
