@@ -1,6 +1,6 @@
 # unqlite.cr
 
-使用Crystal编写的UnQLite数据库的C绑定
+使用Crystal编写的UnQLite绑定
 
 ## Installation
 
