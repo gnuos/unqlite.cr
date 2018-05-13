@@ -1,4 +1,6 @@
 module UnQLite
+  VERSION = "0.1.0"
+
   enum StdPublicReturn
     # Standard return values from Symisc public interfaces
     RET_OK             = 0     # Not an error

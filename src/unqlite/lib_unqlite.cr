@@ -1,11 +1,26 @@
 @[Link("unqlite")]
 lib LibUnQLite
-  alias VoidP = Void*
-  alias StringP = UInt8*
+  alias VoidP = Pointer(Void)
+  alias StringP = Pointer(UInt8)
+
+  alias UnQLiteP = Pointer(Void)
+  alias UnQLiteVm = Pointer(Void)
+  alias UnQLiteFile = Pointer(Void)
+  alias UnQLiteIOMethods = Pointer(Void)
+  alias UnQLiteVfs = Pointer(Void)
+  alias UnQLitePage = Pointer(Void)
+  alias UnQLiteKvHandle = Pointer(Void)
+  alias UnQLiteKvIO = Pointer(Void)
+  alias UnQLiteKvCursor = Pointer(Void)
+  alias UnQLiteKvEngine = Pointer(Void)
+  alias UnQLiteKvMethods = Pointer(Void)
+  alias UnQLiteValue = Pointer(Void)
+  alias UnQLiteContext = Pointer(Void)
+  alias UnQLiteIoStream = Pointer(Void)
   alias UnQLite_Int64 = Int64
 
   # Database Engine Handle
-  fun unqlite_open(ppDB : UnQLiteP*, zFilename : StringP, iMode : UInt32) : Int32
+  fun unqlite_open(ppDB : Pointer(UnQLiteP), zFilename : StringP, iMode : UInt32) : Int32
   fun unqlite_config(pDb : UnQLiteP, nOp : Int32, ...) : Int32
   fun unqlite_close(pDb : UnQLiteP) : Int32
 
