@@ -18,11 +18,11 @@ dependencies:
 require "unqlite"
 ```
 
-在代码中使用使用上面的语句导入 `unqlite` 包可以使用 unqlite 数据库，但是一定要先安装 `libunqlite`，否则无法编译成功。
+在代码中使用使用上面的语句导入 `unqlite` 包可以使用 `unqlite` 数据库，但是一定要先编译安装 `unqlite` 的动态链接库，否则无法使用。
 
 ## Development
 
-还有一些API没有封装起来，如果有需要的话，请先阅读 unqlite 数据库的官方介绍。如果需要一些新的封装，你可以通过以下方式加入进来。
+还有一些API没有封装起来，如果有需要的话，请先阅读 lib_unqlite.cr 的代码。当你需要一些新的API时，你可以通过以下方式加入进来。
 
 ## Contributing
 
